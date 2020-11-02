@@ -1,0 +1,150 @@
+---
+- hosts: appserver
+  remote_user: pyapp
+
+  tasks:
+
+      # Installing pyenv dependencies
+        - name: Install dependencies
+          become: yes
+          apt:
+            pkg:
+            - apache2
+            - build-essential
+            - libssl-dev
+            - zlib1g-dev 
+            - libbz2-dev
+            - libreadline-dev
+            - libsqlite3-dev
+            - wget
+            - curl
+            - llvm
+            - libncurses5-dev
+            - libncursesw5-dev
+            - xz-utils
+            - tk-dev
+            - libffi-dev
+            - liblzma-dev
+            - python-openssl
+              #Installing pyenv
+        - name: Copy files
+          copy:
+              src: pyenv-installer.sh
+              dest: /home/pyapp/pyenv-installer.sh
+              owner: pyapp
+              mode: u=rwx
+
+        - name: Copy configuration
+          copy:
+              src: check_n_add.sh
+              dest: /home/pyapp/check_n_add.sh
+              owner: pyapp
+              mode: u=rwx
+
+        - name: Execute script
+          become: no
+          shell: /home/pyapp/pyenv-installer.sh
+
+        - name: Configurations
+          become: no
+          shell: /home/pyapp/check_n_add.sh
+
+        - name: Clear installer script
+          become: yes
+          file:
+            path: /home/pyapp/pyenv-installer.sh
+            state: absent
+
+        - name: Clear config verification script
+          become: yes
+          file:
+            path: /home/pyapp/check_n_add.sh
+            state: absent
+     
+        - name: Install virtualenv
+          become: yes
+          apt:
+            name: virtualenv
+            state: present
+
+        - name: Creating the testing directory
+          file:
+            path: /home/pyapp/Documents/testing
+            state: directory
+            mode: '0755'
+
+        - name: Copy source
+          copy:
+              src: ../poetry_package
+              dest: /home/pyapp/Documents/testing/
+              owner: pyapp
+              mode: u=rwx
+
+        - name: Copy weather-app-script
+          copy:
+              src: weather-app-script.sh
+              dest: /home/pyapp/weather-app-script.sh
+              owner: pyapp
+              mode: u=rwx
+
+        - name: Execute the weather app script
+          become: no
+          shell: /home/pyapp/weather-app-script.sh
+          args:
+             executable: /bin/bash
+            #        - name: Installing pyenv python 3.7.4
+            #          shell:
+            #            cmd: pyenv install 3.7.4
+            #            chdir: /home/pyapp/Documents/testing
+#        - name: Install pyenv python 3.7.4
+#          sudo: no
+#          shell: source /home/pyapp/.bashrc && pyenv install 3.7.4
+#          args:
+#             executable: /bin/bash
+#             chdir: /home/pyapp/Documents/testing
+#        - name: Multiple commands
+#          shell: |
+#            source /home/pyapp/.bashrc && pyenv virtualenv 3.7.4 weather-app
+#            source /home/pyapp/.bashrc && pyenv activate weather-app
+#            #pyenv install 3.7.4
+#            source /home/pyapp/.bashrc && pip install poetry
+#          args:
+#            executable: /bin/bash
+#            chdir: /home/pyapp/Documents/testing
+            #        - name: create virtualenv
+            #          sudo: no
+            #          shell: source /home/pyapp/.bashrc && pyenv virtualenv 3.7.4 weather-app
+            #          args:
+            #             executable: /bin/bash
+            #             chdir: /home/pyapp/Documents/testing
+            #        - name: activate virtualenv
+            #          sudo: no
+            #          shell: source /home/pyapp/.bashrc && pyenv activate weather-app
+            #          args:
+            #             executable: /bin/bash
+            #             chdir: /home/pyapp/Documents/testing
+            #         - name: Install poetry
+            #           ansible.builtin.pip:
+            #             name: poetry
+            #             state: latest
+            #             #args:
+            #             #chdir: /home/pyapp/Documents/testing
+            #        - name: Poetry install
+            #          command: poetry install
+            #          args:
+            #            chdir: /home/pyapp/Documents/testing/poetry_package
+            #        - name: Run main.py
+            #          command: python main.py
+            #          args:
+            #            chdir: /home/pyapp/Documents/testing/poetry_package
+## Installing virtualenv      
+#- name: Install virtualenv
+#   apt:
+#       name: apache2
+#       state: present 
+#   #    command: echo "export PATH="/home/pyapp/.pyenv/bin:$PATH"\n eval "$(pyenv init -)"\n eval "$(pyenv virtualenv-init -)"" >> ~/.bashrc
+#
+#- command: "{{ item }} chdir=/home/pyapp/Documents/testing"
+#with_items:
+#- /home/pyapp/.pyenv/bin/pyenv virtualenv 3.7.4 weather-app
+#- /home/pyapp/.pyenv/bin/pyenv activate weather-app
