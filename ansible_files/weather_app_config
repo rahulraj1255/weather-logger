@@ -1,0 +1,6 @@
+[Defaults]
+url=https://data.weather.gov.hk/weatherAPI/opendata/weather.php
+url_params={'dataType':'rhrread', 'lang':'en'}
+temp_loc=King's Park
+rain_loc=Wan Chai
+

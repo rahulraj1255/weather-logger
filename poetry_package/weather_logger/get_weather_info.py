@@ -1,23 +1,46 @@
 import io
+import ast
 import os
 import requests
 import csv
 import json
 import datetime
 import logging
+import argparse
+import configparser
+def log_now():
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--do_logging', action='store_true')
+    parser.add_argument("-c", "--conf_file",help="Specify config file", metavar="FILE")
+    params=parser.parse_args()
+   # args, remaining_argv = parser.parse_known_args()
+    parameters={}
+    print(params.conf_file)
+    if not params.conf_file:
+        params.conf_file="~/.weather_app_config"
+        params.conf_file=os.path.expanduser(params.conf_file)
+    config = configparser.SafeConfigParser()
+    config.read([params.conf_file])
+    parameters.update(dict(config.items("Defaults")))
+    parameters.update({"do_logging":params.do_logging})
+    weather_obj=log_weather(parameters)
+    #a=log_weather(temp_loc, rain_loc, url,params,arg.do_logging)
+    weather_obj.log_data()
+        
 class log_weather:
+
     #parms={'dataType':'CLMTEMP', 'station':'HPV', 'rformat':'csv', 'year':'2020'}
-    def __init__(self, loc_temp, loc_rain,url,params,dologging):
-        self.loc_temp=loc_temp
-        self.loc_rain=loc_rain
-        self.url=url
-        self.params=params
-        self.dologging=dologging
+    def __init__(self,params):
+        self.loc_temp=params["temp_loc"]
+        self.loc_rain=params["rain_loc"]
+        self.url=params["url"]
+        self.params=ast.literal_eval(params["url_params"])
+        self.dologging=params["do_logging"]
         curtime=datetime.datetime.now()
         #date_target={'year': curtime.year, 'month': curtime.month, 'day': curtime.day}
         self.datelog=curtime.strftime("%Y_%m_%d")
         self.timelog=curtime.strftime("%H:%M:%S")
-        self.header="Time_logged, Temperature at "+loc_temp+", Rainfall at "+loc_rain+'\n' 
+        self.header="Time_logged, Temperature at "+self.loc_temp+", Rainfall at "+self.loc_rain+'\n' 
         logs_folder='~/logs_weather/'
         logs_folder=os.path.expanduser(logs_folder)
         if not os.path.isdir(logs_folder):
@@ -84,3 +107,4 @@ class log_weather:
             strtowrite=self.timelog+','+str(templog)+','+str(rainlog)+'\n'
             print(strtowrite)
             f.write(strtowrite)
+

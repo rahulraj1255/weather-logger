@@ -7,9 +7,13 @@ authors = ["Rahul"]
 [tool.poetry.dependencies]
 python = "3.7.4"
 requests = "^2.24.0"
+config-parser = "^0.0.1"
 
 [tool.poetry.dev-dependencies]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+log_weather_data = "weather_logger.get_weather_info:log_now"

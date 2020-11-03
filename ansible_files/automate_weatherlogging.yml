@@ -34,68 +34,84 @@
               dest: /home/pyapp/pyenv-installer.sh
               owner: pyapp
               mode: u=rwx
-
+      
         - name: Copy pyenv configuration
           copy:
               src: check_n_add.sh
               dest: /home/pyapp/check_n_add.sh
               owner: pyapp
               mode: u=rwx
-
+      
         - name: Run pyenv configuration
           become: no
           shell: /home/pyapp/check_n_add.sh
           register: result
-
+      
         - name: Installing pyenv
           become: no
           shell: /home/pyapp/pyenv-installer.sh
           when: result.stdout == "true"
-
+      
         - name: Clear installer script
           become: yes
           file:
             path: /home/pyapp/pyenv-installer.sh
             state: absent
-
+      
         - name: Clear config verification script
           become: yes
           file:
             path: /home/pyapp/check_n_add.sh
             state: absent
-     
+        
         - name: Install virtualenv
           become: yes
           apt:
             name: virtualenv
             state: present
-
+      
         - name: Creating the testing directory
           file:
             path: /home/pyapp/Documents/testing
             state: directory
             mode: '0755'
-
+      
         - name: Copy source
           copy:
               src: ../poetry_package
               dest: /home/pyapp/Documents/testing/
               owner: pyapp
               mode: u=rwx
-
-        - name: Copy weather-app-script
+      
+        - name: Copy install-weather-app-script
           copy:
-              src: weather-app-script.sh
-              dest: /home/pyapp/weather-app-script.sh
+              src: install-weather-app-script.sh
+              dest: /home/pyapp/install-weather-app-script.sh
               owner: pyapp
               mode: u=rwx
-
+      
+        - name: Copy weather-app configuration file
+          copy:
+              src: weather_app_config
+              dest: /home/pyapp/.weather_app_config
+              owner: pyapp
+              mode: u=rwx
+      
         - name: Copy delete_old.sh
           copy:
               src: delete_old.sh
               dest: /home/pyapp/delete_old.sh
               owner: pyapp
               mode: u=rwx
+      
+        - name: Run weather app
+          become: no
+          shell: /home/pyapp/install-weather-app-script.sh
+        - name: Using shell
+          cron:
+            name: SHELL
+            env: yes
+            job: /bin/bash
 
         - name: Weather logging crontab job
           cron:
@@ -103,7 +119,7 @@
             minute: "0"
             hour: "6-18"
             dow: "MON-FRI"
-            job: "./weather-app-script.sh"
+            job: 'export PYENV_ROOT="$HOME/.pyenv" && PATH="/home/pyapp/.pyenv/bin:$PATH" && eval "$(pyenv init -)" && eval "$(pyenv virtualenv-init -)" && pyenv activate weather-app && log_weather_data'
 
         - name: Delete old logs
           cron:
@@ -114,7 +130,7 @@
             #
               #        - name: Execute the weather app script
               #          become: no
-              #          shell: /home/pyapp/weather-app-script.sh
+              #          shell: /home/pyapp/install-weather-app-script.sh
               #          args:
               #             executable: /bin/bash
               #

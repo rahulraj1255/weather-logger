@@ -1,5 +1,5 @@
 #!/bin/bash
-source /home/pyapp/.bashrc
+#source /home/pyapp/.bashrc
 PATH="/home/pyapp/.pyenv/bin:$PATH"
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
@@ -19,4 +19,3 @@ if (($?)); then
 fi
 cd poetry_package
 poetry install
-python main.py --do_logging
