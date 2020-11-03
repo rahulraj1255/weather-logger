@@ -50,10 +50,12 @@ patternfound=1
 filename=$profile
 IFS=$'\n'
 readarray -t lines <<< "$lines"
+copied=0
 for line in ${lines[@]}; do
-	echo "In lop"
 	grep "$line" "$filename" >> /dev/null
 	if (( $? == 1 )); then
 		echo "$line" >> "$filename"
+        copied=1
 	fi
 done
+(( $copied )) && echo true || echo false

@@ -15,7 +15,7 @@ class log_weather:
         self.dologging=dologging
         curtime=datetime.datetime.now()
         #date_target={'year': curtime.year, 'month': curtime.month, 'day': curtime.day}
-        self.datelog=curtime.strftime("%Y %m %d")
+        self.datelog=curtime.strftime("%Y_%m_%d")
         self.timelog=curtime.strftime("%H:%M:%S")
         self.header="Time_logged, Temperature at "+loc_temp+", Rainfall at "+loc_rain+'\n' 
         logs_folder='~/logs_weather/'

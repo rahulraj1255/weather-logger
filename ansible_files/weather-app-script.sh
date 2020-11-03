@@ -1,5 +1,6 @@
 #!/bin/bash
-source ~/.bashrc
+source /home/pyapp/.bashrc
+PATH="/home/pyapp/.pyenv/bin:$PATH"
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 cd ~/Documents/testing
