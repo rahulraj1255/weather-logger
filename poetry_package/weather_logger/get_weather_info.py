@@ -79,11 +79,11 @@ class log_weather:
         if templog==None:
             if self.dologging:
                 logging.info(self.datelog+"::"+self.timelog+"::  Temperature value for "+self.loc_temp+" doesn't exist. Please try another location")
-            templog=0
+            templog=-1
         if rainlog==None:
             if self.dologging:
                 logging.info(self.datelog+"::"+self.timelog+"::  Rainfall value for "+self.loc_rain+" doesn't exist. Please try another location")
-            rainlog=0
+            rainlog=-1
        # print(rainlog)
        # print(templog)
         #print(json.dumps(data_f, indent=4, sort_keys=True))

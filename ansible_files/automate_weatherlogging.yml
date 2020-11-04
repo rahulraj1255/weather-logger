@@ -119,7 +119,7 @@
             minute: "0"
             hour: "6-18"
             dow: "MON-FRI"
-            job: 'export PYENV_ROOT="$HOME/.pyenv" && PATH="/home/pyapp/.pyenv/bin:$PATH" && eval "$(pyenv init -)" && eval "$(pyenv virtualenv-init -)" && pyenv activate weather-app && log_weather_data'
+            job: 'export PYENV_ROOT="$HOME/.pyenv" && PATH="/home/pyapp/.pyenv/bin:$PATH" && eval "$(pyenv init -)" && eval "$(pyenv virtualenv-init -)" && pyenv activate weather-app && log_weather_data --do_logging'
 
         - name: Delete old logs
           cron:

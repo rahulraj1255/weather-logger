@@ -18,4 +18,5 @@ if (($?)); then
     pip install poetry
 fi
 cd poetry_package
-poetry install
+poetry build
+pip install dist/*.whl
